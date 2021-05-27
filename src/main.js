@@ -1,5 +1,5 @@
-// import TodoMVC from "./TodoMVC.svelte";
+import App from "./App.svelte";
 
-// window.todomvc = new TodoMVC({
-//   target: document.querySelector(".todoapp"),
-// });
+new App({
+  target: document.querySelector(".todoapp"),
+});
