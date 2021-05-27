@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <title>Svelte • TodoMVC</title>
+
+  <link rel="icon" href="#" />
+
+  <link rel="stylesheet" href="todomvc-common.css" />
+  <link rel="stylesheet" href="todomvc-app-css.css" />
+
+  <!-- <script defer src="todomvc-common.js"></script> -->
+  <script defer src="build/bundle.js"></script>
+</head>
+
+<body>
+
+  <section class="todoapp">
+
+    <header class="header">
+      <h1>todos</h1>
+      <input class="new-todo" placeholder="What needs to be done?">
+    </header>
+
+    <section class="main">
+      <input id="toggle-all" class="toggle-all" type="checkbox">
+      <label for="toggle-all">Mark all as complete</label>
+
+      <ul class="todo-list">
+        <li>
+          <div class="view">
+            <input class="toggle" type="checkbox">
+            <label>Todo 1</label>
+            <button class="destroy"></button>
+          </div>
+        </li>
+        <li class="completed">
+          <div class="view">
+            <input class="toggle" type="checkbox" checked>
+            <label>Todo 2</label>
+            <button class="destroy"></button>
+          </div>
+        </li>
+        <li class="editing">
+          <div class="view">
+            <input class="toggle" type="checkbox">
+            <label>Todo 3</label>
+            <button class="destroy"></button>
+          </div>
+          <input value="Todo 3" id="edit" class="edit">
+        </li>
+      </ul>
+
+      <footer class="footer">
+        <span class="todo-count">
+          <strong>2</strong>
+          items left
+        </span>
+
+        <ul class="filters">
+          <li>
+            <a class="selected" href="#/">All</a>
+          </li>
+          <li>
+            <a class="" href="#/active">Active</a>
+          </li>
+          <li>
+            <a class="" href="#/completed">Completed</a>
+          </li>
+        </ul>
+
+        <button class="clear-completed" on:click={clearCompleted}>
+          Clear completed
+        </button>
+      </footer>
+    </section>
+
+  </section>
+
+
+
+</body>
+
+</html>
