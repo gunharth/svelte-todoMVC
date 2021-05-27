@@ -1,5 +1,4 @@
 <script>
-  let editing = null;
   let items = [
     {
       id: 1,
@@ -12,6 +11,21 @@
       completed: true,
     },
   ];
+  let editing = null
+
+  function handleEdit(e) {
+    if(e.key === 'Enter') {
+      e.target.blur()
+    } else if(e.key === 'Escape') {
+      e.target.value = items[editing].description
+      e.target.blur()
+    }
+  }
+
+  function submit(e) {
+    items[editing].description = e.target.value
+    editing = null
+  }
 </script>
 
 <header class="header">
@@ -25,36 +39,29 @@
 
   <ul class="todo-list">
     {#each items as item, index}
-      <li class="{item.completed ? 'completed' : ''}">
+      <li
+        class="{item.completed ? 'completed' : ''} {editing === index
+          ? 'editing'
+          : ''}"
+      >
         <div class="view">
-          <input class="toggle" type="checkbox" bind:checked={item.completed}>
-          <label for="description">{item.description}</label>
+          <input class="toggle" type="checkbox" bind:checked={item.completed} />
+          <label on:dblclick={() => (editing = index)} for="description"
+            >{item.description}</label
+          >
           <button class="destroy" />
         </div>
+        {#if editing === index}
+          <input
+            value={item.description}
+            id="edit"
+            class="edit"
+            on:keydown={handleEdit}
+            on:blur={submit}
+          />
+        {/if}
       </li>
     {/each}
-    <li>
-      <div class="view">
-        <input class="toggle" type="checkbox" />
-        <label>Todo 1</label>
-        <button class="destroy" />
-      </div>
-    </li>
-    <li class="completed">
-      <div class="view">
-        <input class="toggle" type="checkbox" checked />
-        <label>Todo 2</label>
-        <button class="destroy" />
-      </div>
-    </li>
-    <li class="editing">
-      <div class="view">
-        <input class="toggle" type="checkbox" />
-        <label>Todo 3</label>
-        <button class="destroy" />
-      </div>
-      <input value="Todo 3" id="edit" class="edit" />
-    </li>
   </ul>
 
   <footer class="footer">
@@ -75,8 +82,6 @@
       </li>
     </ul>
 
-    <button class="clear-completed">
-      Clear completed
-    </button>
+    <button class="clear-completed"> Clear completed </button>
   </footer>
 </section>
