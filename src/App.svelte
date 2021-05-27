@@ -1,4 +1,5 @@
 <script>
+  let editing = null;
   let items = [
     {
       id: 1,
@@ -23,15 +24,14 @@
   <label for="toggle-all">Mark all as complete</label>
 
   <ul class="todo-list">
-    {#each items as item, index (item.id)}
-    <li class="{item.completed ? 'completed' : ''}">
-      <div class="view">
-        <input class="toggle" type="checkbox" bind:checked={item.completed}>
-        <label for="description">{item.description}</label>
-        <button class="destroy" />
-      </div>
-    </li>
-
+    {#each items as item, index}
+      <li class="{item.completed ? 'completed' : ''}">
+        <div class="view">
+          <input class="toggle" type="checkbox" bind:checked={item.completed}>
+          <label for="description">{item.description}</label>
+          <button class="destroy" />
+        </div>
+      </li>
     {/each}
     <li>
       <div class="view">

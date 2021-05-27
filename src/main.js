@@ -1,5 +1,5 @@
 import App from "./App.svelte";
 
-new App({
+const app = new App({
   target: document.querySelector(".todoapp"),
 });
