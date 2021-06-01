@@ -1,44 +1,80 @@
 <script>
-  let items  = JSON.parse(localStorage.getItem("todos-svelte")) || [];
+  import { v4 as uuidv4 } from "uuid";
 
+  let items = [];
   let editing = null;
+  let currentFilter = "all";
 
-  function newItem(e) {
-    if (e.key === "Enter") {
-      if (e.target.value.length > 0) {
+  items = JSON.parse(localStorage.getItem("todos-svelte")) || [];
+
+  function newItem(event) {
+    if (event.key === "Enter") {
+      if (event.target.value.length > 0) {
         let item = {
-          id: 4,
-          description: e.target.value,
+          id: uuidv4(),
+          description: event.target.value,
           completed: false,
         };
         items = [...items, item];
-        e.target.value = "";
+        event.target.value = "";
       }
     }
   }
 
   function remove(index) {
-    items = items.filter((e,i) => i != index);
+    items = items.filter((e, i) => i != index);
   }
 
-  function handleEdit(e) {
-    if (e.key === "Enter") {
-      e.target.blur();
-    } else if (e.key === "Escape") {
-      e.target.value = items[editing].description;
-      e.target.blur();
+  function handleEdit(event) {
+    if (event.key === "Enter") {
+      event.target.blur();
+    } else if (event.key === "Escape") {
+      event.target.value = items[editing].description;
+      event.target.blur();
     }
   }
 
-  function submit(e) {
-    items[editing].description = e.target.value;
+  function submit(event) {
+    items[editing].description = event.target.value;
     editing = null;
   }
 
-  $: {
-    numActive = items.filter( item => item != item.completed).length
-    localStorage.setItem("todos-svelte", JSON.stringify(items));
+  function toggleAll(event) {
+    items = items.map((item) => ({
+      id: item.id,
+      description: item.description,
+      completed: event.target.checked,
+    }));
   }
+
+  function clearCompleted() {
+    items = items.filter((item) => !item.completed);
+  }
+
+  function render() {
+    currentFilter = "all";
+    if (window.location.hash === "#active") {
+      currentFilter = "active";
+    } else if (window.location.hash === "#completed") {
+      currentFilter = "completed";
+    }
+  }
+
+  render();
+
+  window.addEventListener("hashchange", render);
+
+  $: filtered =
+    currentFilter === "all"
+      ? items
+      : currentFilter === "completed"
+      ? items.filter((item) => item.completed)
+      : items.filter((item) => !item.completed);
+
+  $: numActive = items.filter((item) => !item.completed).length;
+  $: numCompleted = items.filter((item) => item.completed).length;
+
+  $: localStorage.setItem("todos-svelte", JSON.stringify(items));
 </script>
 
 <header class="header">
@@ -52,11 +88,17 @@
 
 {#if items.length > 0}
   <section class="main">
-    <input id="toggle-all" class="toggle-all" type="checkbox" />
+    <input
+      id="toggle-all"
+      class="toggle-all"
+      type="checkbox"
+      on:change={toggleAll}
+      checked={numCompleted === items.length}
+    />
     <label for="toggle-all">Mark all as complete</label>
 
     <ul class="todo-list">
-      {#each items as item, index}
+      {#each filtered as item, index (item.id)}
         <li
           class="{item.completed ? 'completed' : ''} {editing === index
             ? 'editing'
@@ -89,22 +131,38 @@
     <footer class="footer">
       <span class="todo-count">
         <strong>{numActive}</strong>
-        items left
+        {numActive === 1 ? "item" : "items"} left
       </span>
 
       <ul class="filters">
         <li>
-          <a class="selected" href="#/">All</a>
+          <a class={currentFilter === "all" ? "selected" : ""} href="#all">
+            All
+          </a>
         </li>
         <li>
-          <a class="" href="#/active">Active</a>
+          <a
+            class={currentFilter === "active" ? "selected" : ""}
+            href="#active"
+          >
+            Active
+          </a>
         </li>
         <li>
-          <a class="" href="#/completed">Completed</a>
+          <a
+            class={currentFilter === "completed" ? "selected" : ""}
+            href="#completed"
+          >
+            Completed
+          </a>
         </li>
       </ul>
 
-      <button class="clear-completed"> Clear completed </button>
+      {#if numCompleted}
+        <button class="clear-completed" on:click={clearCompleted}>
+          Clear completed
+        </button>
+      {/if}
     </footer>
   </section>
 {/if}
