@@ -1,8 +1,7 @@
 <script>
-  let items = [];
-  let editing = null;
+  let items  = JSON.parse(localStorage.getItem("todos-svelte")) || [];
 
-  items = JSON.parse(localStorage.getItem("todos-svelte")) || [];
+  let editing = null;
 
   function newItem(e) {
     if (e.key === "Enter") {
@@ -36,7 +35,10 @@
     editing = null;
   }
 
-  $: localStorage.setItem("todos-svelte", JSON.stringify(items));
+  $: {
+    numActive = items.filter( item => item != item.completed).length
+    localStorage.setItem("todos-svelte", JSON.stringify(items));
+  }
 </script>
 
 <header class="header">
@@ -86,7 +88,7 @@
 
     <footer class="footer">
       <span class="todo-count">
-        <strong>2</strong>
+        <strong>{numActive}</strong>
         items left
       </span>
 
